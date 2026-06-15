@@ -22,7 +22,6 @@
       <div v-if="activeTab === 'submit'">
         <div style="max-width: 680px;">
 
-          <!-- Success state -->
           <div v-if="submitSuccess" style="text-align:center; padding: 60px 20px;">
             <div style="font-family: var(--ff-display); font-size: 1.8rem; font-weight: 900; margin-bottom: 12px;">Work Submitted!</div>
             <p style="color: var(--muted); margin-bottom: 28px;">Reviewers will find it shortly. Honest feedback is coming your way.</p>
@@ -39,6 +38,7 @@
               <div class="form-error" v-if="submitErrors.title">{{ submitErrors.title }}</div>
             </div>
 
+            <!-- CATEGORY — 3 options with proper icons -->
             <div class="form-group">
               <label class="form-label">Category</label>
               <div class="type-grid">
@@ -48,19 +48,64 @@
                   @click="submitForm.type = t.value"
                 >
                   <span class="t-icon">
-                    <svg v-if="t.value === 'film'" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
-                    <svg v-if="t.value === 'design'" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>
-                    <svg v-if="t.value === 'writing'" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
-                    <svg v-if="t.value === 'music'" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                    <!-- Camera icon for Photography -->
+                    <svg v-if="t.value === 'film'" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+                      <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                    <!-- Palette icon for Art -->
+                    <svg v-if="t.value === 'art'" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.28 0 .5-.22.5-.5 0-.25-.1-.48-.26-.65-.94-1.03-.96-2.6.04-3.6.44-.44 1.02-.75 1.72-.75H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8z"/>
+                      <circle cx="6.5" cy="11.5" r="1" fill="currentColor"/>
+                      <circle cx="10" cy="7" r="1" fill="currentColor"/>
+                      <circle cx="14" cy="7" r="1" fill="currentColor"/>
+                      <circle cx="17.5" cy="11.5" r="1" fill="currentColor"/>
+                    </svg>
+                    <!-- Pen tool icon for Graphic Design -->
+                    <svg v-if="t.value === 'design'" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 19l7-7 3 3-7 7-3-3z"/>
+                      <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
+                      <path d="M2 2l7.586 7.586"/>
+                      <circle cx="11" cy="11" r="2"/>
+                    </svg>
                   </span>
                   {{ t.label }}
                 </div>
               </div>
             </div>
 
+            <!-- FILE UPLOAD — drag, drop, or click -->
             <div class="form-group">
-              <label class="form-label">Link to Your Work</label>
-              <input class="form-input" v-model="submitForm.link" type="url" placeholder="Paste a link (portfolio, VSCO, 500px, Instagram...)" />
+              <label class="form-label">Upload Your Work</label>
+              <div class="file-upload-area" @click="triggerFileInput" @dragover.prevent @drop.prevent="handleDrop">
+                <input type="file" ref="fileInput" accept="image/*" style="display:none" @change="handleFileChange" />
+
+                <!-- Empty state -->
+                <div v-if="!uploadPreview && !uploading">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 12px;display:block;color:var(--muted)">
+                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                  </svg>
+                  <div style="font-family:var(--ff-mono);font-size:0.78rem;color:var(--muted);text-align:center;">Click to upload or drag and drop</div>
+                  <div style="font-family:var(--ff-mono);font-size:0.68rem;color:var(--muted);text-align:center;margin-top:4px;">PNG, JPG, WEBP — max 5MB</div>
+                </div>
+
+                <!-- Preview after selecting -->
+                <div v-if="uploadPreview" style="text-align:center;">
+                  <img :src="uploadPreview" style="max-height:200px;max-width:100%;border-radius:4px;margin-bottom:8px;" />
+                  <div style="font-family:var(--ff-mono);font-size:0.72rem;color:var(--muted);">{{ uploadedFile?.name }}</div>
+                  <button @click.stop="clearUpload" style="font-family:var(--ff-mono);font-size:0.68rem;color:var(--red);background:none;border:none;cursor:pointer;margin-top:6px;">Remove image</button>
+                </div>
+
+                <!-- Upload in progress -->
+                <div v-if="uploading" style="text-align:center;font-family:var(--ff-mono);font-size:0.78rem;color:var(--muted);">Uploading your image...</div>
+              </div>
+
+              <!-- Optional link fallback -->
+              <div style="margin-top:10px;">
+                <input class="form-input" v-model="submitForm.link" type="url" placeholder="Or paste a link instead (VSCO, 500px, Instagram...)" />
+              </div>
               <div class="form-error" v-if="submitErrors.link">{{ submitErrors.link }}</div>
             </div>
 
@@ -99,11 +144,21 @@
               <div class="review-card-meta">{{ timeAgo(work.created_at) }}</div>
             </div>
             <div class="review-card-body">
+              <!-- Show image thumbnail if it was uploaded directly -->
+              <div v-if="work.link && isImageUrl(work.link)" style="margin-bottom:12px;">
+                <img :src="work.link" style="width:100%;border-radius:4px;max-height:180px;object-fit:cover;" />
+              </div>
               <div class="review-snippet">{{ work.description || 'No description.' }}</div>
               <div v-if="work.context" style="font-family:var(--ff-mono);font-size:0.7rem;color:var(--red);margin-bottom:8px;">❓ {{ work.context }}</div>
-              <a v-if="work.link" :href="work.link" target="_blank" style="font-family:var(--ff-mono);font-size:0.7rem;color:var(--red);">View Work ↗</a>
+              <a v-if="work.link && !isImageUrl(work.link)" :href="work.link" target="_blank" style="font-family:var(--ff-mono);font-size:0.7rem;color:var(--red);">View Work ↗</a>
+              <!-- Copy shareable link -->
+              <div style="margin-top:10px;">
+                <button @click="copyWorkLink(work.id)" style="font-family:var(--ff-mono);font-size:0.68rem;color:var(--muted);background:none;border:1px solid var(--border);border-radius:2px;padding:4px 10px;cursor:pointer;transition:all 0.2s;">
+                  {{ copiedId === work.id ? '✓ Link Copied!' : 'Copy Share Link' }}
+                </button>
+              </div>
             </div>
-            <!-- Reviews on this work -->
+            <!-- Reviews received -->
             <div v-if="work.reviews?.length > 0" style="padding: 12px 20px; border-top: 1px solid var(--border);">
               <div style="font-family:var(--ff-mono);font-size:0.68rem;color:var(--muted);margin-bottom:10px;">REVIEWS RECEIVED</div>
               <div v-for="(review, i) in work.reviews" :key="i" style="padding: 10px; background: var(--cream); border-radius: 4px; margin-bottom: 8px;">
@@ -198,22 +253,28 @@ const submittingReview = ref(false)
 const submitSuccess = ref(false)
 const reviewSuccess = ref(false)
 const reviewError = ref('')
+const copiedId = ref(null)
 
+// File upload state
+const fileInput = ref(null)
+const uploadedFile = ref(null)
+const uploadPreview = ref(null)
+const uploading = ref(false)
+
+// Only 3 categories now
 const types = [
   { value: 'film', label: 'Photography' },
-  { value: 'design', label: 'Design' },
-  { value: 'writing', label: 'Writing' },
-  { value: 'music', label: 'Music' },
+  { value: 'art', label: 'Art' },
+  { value: 'design', label: 'Graphic Design' },
 ]
 
-const typeColors = { design: '#2a6496', writing: '#5a3e6b', music: '#2e6b4f', film: '#8b4513' }
-const typeLabels = { design: 'Design', writing: 'Writing', music: 'Music', film: 'Photography' }
+const typeColors = { film: '#8b4513', art: '#5a3e6b', design: '#2a6496' }
+const typeLabels = { film: 'Photography', art: 'Art', design: 'Graphic Design' }
 
 const criteria = {
   film: ['Composition', 'Light', 'Story', 'Mood', 'Execution'],
-  design: ['Concept', 'Execution', 'Originality'],
-  writing: ['Voice', 'Pacing', 'Hook'],
-  music: ['Mix', 'Mood', 'Structure']
+  art: ['Concept', 'Technique', 'Originality', 'Impact'],
+  design: ['Concept', 'Execution', 'Originality', 'Clarity']
 }
 
 const submitForm = ref({ title: '', type: 'film', link: '', context: '', description: '' })
@@ -230,12 +291,64 @@ function updateCriteria() {
   }
 }
 
+// File upload functions
+function triggerFileInput() { fileInput.value?.click() }
+
+function handleFileChange(e) {
+  const file = e.target.files[0]
+  if (file) processFile(file)
+}
+
+function handleDrop(e) {
+  const file = e.dataTransfer.files[0]
+  if (file) processFile(file)
+}
+
+function processFile(file) {
+  if (file.size > 5 * 1024 * 1024) {
+    alert('That image is too large. Keep it under 5MB please.')
+    return
+  }
+  uploadedFile.value = file
+  // Show a preview before uploading
+  const reader = new FileReader()
+  reader.onload = (e) => { uploadPreview.value = e.target.result }
+  reader.readAsDataURL(file)
+}
+
+function clearUpload() {
+  uploadedFile.value = null
+  uploadPreview.value = null
+  if (fileInput.value) fileInput.value.value = ''
+}
+
+async function uploadToSupabase(file) {
+  const ext = file.name.split('.').pop()
+  const filename = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}.${ext}`
+  const { error } = await supabase.storage
+    .from('works')
+    .upload(filename, file, { contentType: file.type })
+  if (error) throw error
+  const { data: urlData } = supabase.storage.from('works').getPublicUrl(filename)
+  return urlData.publicUrl
+}
+
+function isImageUrl(url) {
+  return url && (url.includes('supabase') || /\.(jpg|jpeg|png|webp|gif)$/i.test(url))
+}
+
+function copyWorkLink(workId) {
+  const url = `${window.location.origin}/work/${workId}`
+  navigator.clipboard.writeText(url)
+  copiedId.value = workId
+  setTimeout(() => { copiedId.value = null }, 2500)
+}
+
 onMounted(async () => {
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) { router.push('/auth'); return }
   userName.value = session.user.user_metadata?.full_name || ''
 
-  // Load my works with reviews
   const { data: works } = await supabase
     .from('works')
     .select('*, reviews(*)')
@@ -244,7 +357,6 @@ onMounted(async () => {
   myWorks.value = works || []
   loadingWorks.value = false
 
-  // Load all works for review dropdown
   const { data: all } = await supabase
     .from('works')
     .select('id, title, type')
@@ -268,19 +380,37 @@ async function handleSubmitWork() {
 
   submitting.value = true
   const { data: { session } } = await supabase.auth.getSession()
+
+  let imageUrl = submitForm.value.link
+
+  // If they uploaded a file, send it to Supabase Storage first
+  if (uploadedFile.value) {
+    try {
+      uploading.value = true
+      imageUrl = await uploadToSupabase(uploadedFile.value)
+      uploading.value = false
+    } catch (err) {
+      alert('Upload failed: ' + err.message)
+      submitting.value = false
+      uploading.value = false
+      return
+    }
+  }
+
   const { error } = await supabase.from('works').insert({
     title: submitForm.value.title,
     type: submitForm.value.type,
-    link: submitForm.value.link,
+    link: imageUrl,
     context: submitForm.value.context,
     description: submitForm.value.description,
     user_id: session.user.id
   })
-  submitting.value = false
-  if (error) { alert('Error submitting work: ' + error.message); return }
-  submitSuccess.value = true
 
-  // Reload my works
+  submitting.value = false
+  if (error) { alert('Something went wrong: ' + error.message); return }
+  submitSuccess.value = true
+  clearUpload()
+
   const { data: works } = await supabase
     .from('works')
     .select('*, reviews(*)')
@@ -292,6 +422,7 @@ async function handleSubmitWork() {
 function resetSubmit() {
   submitForm.value = { title: '', type: 'film', link: '', context: '', description: '' }
   submitSuccess.value = false
+  clearUpload()
 }
 
 async function handleSubmitReview() {
@@ -310,7 +441,7 @@ async function handleSubmitReview() {
     scores: reviewForm.value.scores
   })
   submittingReview.value = false
-  if (error) { reviewError.value = 'Error submitting review: ' + error.message; return }
+  if (error) { reviewError.value = 'Error: ' + error.message; return }
   reviewSuccess.value = true
   reviewForm.value = { workId: '', text: '', strength: '', weakness: '', scores: {} }
 }
@@ -327,10 +458,12 @@ function timeAgo(ts) {
 .tab-row{display:flex;border-bottom:1.5px solid var(--border);margin-bottom:0;}
 .tab{padding:12px 24px;cursor:pointer;font-family:var(--ff-mono);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1.5px;transition:all 0.2s;}
 .tab.active{color:var(--red);border-bottom-color:var(--red);}
-.type-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
 .type-btn{padding:12px 8px;text-align:center;border:1.5px solid var(--border);border-radius:4px;cursor:pointer;transition:all 0.2s;background:var(--surface);font-family:var(--ff-body);font-size:0.8rem;font-weight:500;}
 .type-btn:hover,.type-btn.active{border-color:var(--red);background:rgba(214,58,47,0.06);color:var(--red);}
 .t-icon{display:flex;justify-content:center;align-items:center;margin-bottom:6px;height:28px;}
+.file-upload-area{border:2px dashed var(--border);border-radius:4px;padding:32px 20px;cursor:pointer;transition:all 0.2s;background:var(--surface);}
+.file-upload-area:hover{border-color:var(--red);}
 @media(max-width:768px){
   .type-grid{grid-template-columns:repeat(2,1fr);}
   div[style*="padding: 40px 60px"]{padding:24px 16px !important;}
