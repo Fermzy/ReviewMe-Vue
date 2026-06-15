@@ -2,14 +2,17 @@
   <main>
     <Navbar />
 
-    <!-- HERO -->
-    <section class="hero-center">
-      <div class="eyebrow">Honest feedback, zero filter</div>
-      <h1 class="hero-h1">Your photography deserves<br>the <em>truth.</em></h1>
-      <p class="hero-desc">ReviewMe is the anonymous review platform for photographers who are done with empty praise. Submit your work. Get brutal, honest, constructive feedback from people who actually care about craft.</p>
-      <div class="hero-cta">
-        <button class="btn-main" @click="router.push('/auth?mode=signup')">Submit Your Work</button>
-        <button class="btn-outline" @click="router.push('/browse')">Browse Reviews</button>
+    <!-- HERO WITH BACKGROUND IMAGE -->
+    <section class="hero-section">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <div class="eyebrow">Honest feedback, zero filter</div>
+        <h1 class="hero-h1">Your photography deserves<br>the <em>truth.</em></h1>
+        <p class="hero-desc">ReviewMe is the anonymous review platform for photographers who are done with empty praise. Submit your work. Get brutal, honest, constructive feedback from people who actually care about craft.</p>
+        <div class="hero-cta">
+          <button class="btn-main" @click="router.push('/auth?mode=signup')">Submit Your Work</button>
+          <button class="btn-outline-light" @click="router.push('/browse')">Browse Reviews</button>
+        </div>
       </div>
     </section>
 
@@ -142,10 +145,22 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.hero-section{position:relative;min-height:90vh;display:flex;align-items:center;justify-content:center;background-image:url('/hero.jpg');background-size:cover;background-position:center;background-attachment:fixed;}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(10,9,8,0.55) 0%,rgba(10,9,8,0.45) 60%,rgba(10,9,8,0.7) 100%);}
+.hero-content{position:relative;z-index:1;max-width:780px;padding:100px 40px;text-align:center;}
+.hero-content .eyebrow{color:rgba(255,255,255,0.7);}
+.hero-content .hero-h1{color:#ffffff;}
+.hero-content .hero-desc{color:rgba(255,255,255,0.82);}
+.btn-outline-light{background:transparent;color:white;border:1.5px solid rgba(255,255,255,0.6);padding:13px 28px;font-family:var(--ff-body);font-weight:600;font-size:0.9rem;letter-spacing:0.05em;text-transform:uppercase;cursor:pointer;border-radius:3px;transition:all 0.2s;}
+.btn-outline-light:hover{background:rgba(255,255,255,0.15);border-color:white;}
 .cred-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
 .cred-card{border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:28px;background:rgba(255,255,255,0.03);}
 .cred-icon{margin-bottom:14px;}
 .cred-title{font-family:var(--ff-display);font-size:1.1rem;font-weight:700;margin-bottom:8px;color:var(--paper);}
 .cred-desc{font-size:0.85rem;color:#a09880;line-height:1.6;}
-@media(max-width:768px){.cred-grid{grid-template-columns:1fr;}}
+@media(max-width:768px){
+  .cred-grid{grid-template-columns:1fr;}
+  .hero-section{background-attachment:scroll;min-height:80vh;}
+  .hero-content{padding:60px 24px;}
+}
 </style>
