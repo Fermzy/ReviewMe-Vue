@@ -1,13 +1,66 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>reviewme-vue</title>
-  </head>
-  <body>
-    <div id="app"></div>
-   <script type="module" src="/main.js"></script>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReviewMe – Honest Reviews for Photographers</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=IBM+Plex+Mono:wght@300;400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="location.href='/'">Review<em>Me</em></div>
+  <div class="nav-links">
+    <button class="nav-btn" onclick="location.href='/browse.html'">Browse</button>
+    <button class="nav-btn" onclick="location.href='/auth.html'">Log In</button>
+    <button class="nav-btn primary" onclick="location.href='/auth.html#signup'">Sign Up Free</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero-center">
+  <div class="eyebrow">Honest feedback, zero filter</div>
+  <h1 class="hero-h1">Your photography deserves<br>the <em>truth.</em></h1>
+  <p class="hero-desc">ReviewMe is the anonymous review platform for photographers who are done with empty praise. Submit your work. Get brutal, honest, constructive feedback from people who actually care about craft.</p>
+  <div class="hero-cta">
+    <button class="btn-main" onclick="location.href='/auth.html#signup'">Submit Your Work</button>
+    <button class="btn-outline" onclick="location.href='/browse.html'">Browse Reviews</button>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-bar">
+  <div class="stat"><div class="stat-num" id="stat-works">—</div><div class="stat-lbl">Works Submitted</div></div>
+  <div class="stat"><div class="stat-num" id="stat-reviews">—</div><div class="stat-lbl">Reviews Written</div></div>
+  <div class="stat"><div class="stat-num" id="stat-reviewers">—</div><div class="stat-lbl">Reviewers</div></div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section">
+  <div class="section-tag">Process</div>
+  <h2 class="section-h2">How ReviewMe works</h2>
+  <div class="steps">
+    <div class="step"><div class="step-num">01</div><div class="step-title">Submit your work</div><div class="step-desc">Paste a link or upload your photo. Tell reviewers exactly what you want feedback on.</div></div>
+    <div class="step"><div class="step-num">02</div><div class="step-title">Get anonymous reviews</div><div class="step-desc">Real photographers review your work with no social pressure. Just honest critique.</div></div>
+    <div class="step"><div class="step-num">03</div><div class="step-title">Build credibility</div><div class="step-desc">Review others to earn credibility. Better reviewers get more visibility on the platform.</div></div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section section-dark">
+  <h2 class="section-h2" style="color:var(--paper);">Ready for honest feedback?</h2>
+  <p class="section-sub">Join photographers who chose growth over comfort.</p>
+  <button class="btn-main" onclick="location.href='/auth.html#signup'">Create Free Account</button>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2025 ReviewMe. Built for creatives who want the truth.</span>
+  <span style="color:var(--red);">◈ Honest by design.</span>
+</footer>
+
+<script type="module" src="/src/landing.js"></script>
+</body>
 </html>
