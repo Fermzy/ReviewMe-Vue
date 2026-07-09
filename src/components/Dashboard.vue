@@ -277,10 +277,7 @@ const criteria = {
   design: ['Concept', 'Execution', 'Originality', 'Clarity']
 }
 
-const submitForm = ref({ title: '', type: 'film', link: '', context: '', description: '' })
-const submitErrors = ref({ title: '', link: '' })
-const reviewForm = ref({ workId: '', text: '', strength: '', weakness: '', scores: {} })
-const currentCriteria = ref([])
+const submitForm = ref({ title: '', type: 'film', link: '', context: '', description: '', isPublic: true, submitterName: '' })
 
 function updateCriteria() {
   const work = allWorks.value.find(w => w.id === reviewForm.value.workId)
