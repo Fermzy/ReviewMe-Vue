@@ -466,8 +466,34 @@ async function handleSubmitReview() {
     weakness: reviewForm.value.weakness,
     scores: reviewForm.value.scores
   })
-  submittingReview.value = false
+ submittingReview.value = false
   if (error) { reviewError.value = 'Error: ' + error.message; return }
+
+  // Send email notification to work submitter
+  try {
+    const { data: workData } = await supabase
+      .from('works')
+      .select('title, user_id')
+      .eq('id', reviewForm.value.workId)
+      .single()
+
+    if (workData) {
+      const { data: userData } = await supabase
+        .rpc('get_user_email', { user_id: workData.user_id })
+
+      if (userData) {
+       await supabase.functions.invoke('hyper-responder', {
+            workTitle: workData.title,
+            submitterEmail: userData,
+            workId: reviewForm.value.workId
+          }
+        })
+      }
+    }
+  } catch (err) {
+    console.log('Email notification failed silently:', err)
+  }
+
   reviewSuccess.value = true
   reviewForm.value = { workId: '', text: '', strength: '', weakness: '', scores: {} }
 }
