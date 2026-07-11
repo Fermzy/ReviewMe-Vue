@@ -4,14 +4,12 @@
 
     <div style="padding: 40px 60px; max-width: 1200px; margin: 0 auto;">
 
-      <!-- HEADER -->
       <div style="margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1.5px solid var(--border);">
         <div class="eyebrow">Dashboard</div>
         <h1 class="section-h2">Welcome back{{ userName ? ', ' + userName : '' }}</h1>
         <p style="color: var(--muted); font-size: 0.9rem;">Submit your work or write a review for someone else.</p>
       </div>
 
-      <!-- TABS -->
       <div class="tab-row" style="margin-bottom: 32px;">
         <div :class="['tab', activeTab === 'submit' ? 'active' : '']" @click="activeTab = 'submit'">Submit Work</div>
         <div :class="['tab', activeTab === 'myworks' ? 'active' : '']" @click="activeTab = 'myworks'">My Submissions</div>
@@ -38,22 +36,15 @@
               <div class="form-error" v-if="submitErrors.title">{{ submitErrors.title }}</div>
             </div>
 
-            <!-- CATEGORY — 3 options with proper icons -->
             <div class="form-group">
               <label class="form-label">Category</label>
               <div class="type-grid">
-                <div
-                  v-for="t in types" :key="t.value"
-                  :class="['type-btn', submitForm.type === t.value ? 'active' : '']"
-                  @click="submitForm.type = t.value"
-                >
+                <div v-for="t in types" :key="t.value" :class="['type-btn', submitForm.type === t.value ? 'active' : '']" @click="submitForm.type = t.value">
                   <span class="t-icon">
-                    <!-- Camera icon for Photography -->
                     <svg v-if="t.value === 'film'" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
                       <circle cx="12" cy="13" r="4"/>
                     </svg>
-                    <!-- Palette icon for Art -->
                     <svg v-if="t.value === 'art'" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.28 0 .5-.22.5-.5 0-.25-.1-.48-.26-.65-.94-1.03-.96-2.6.04-3.6.44-.44 1.02-.75 1.72-.75H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8z"/>
                       <circle cx="6.5" cy="11.5" r="1" fill="currentColor"/>
@@ -61,7 +52,6 @@
                       <circle cx="14" cy="7" r="1" fill="currentColor"/>
                       <circle cx="17.5" cy="11.5" r="1" fill="currentColor"/>
                     </svg>
-                    <!-- Pen tool icon for Graphic Design -->
                     <svg v-if="t.value === 'design'" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M12 19l7-7 3 3-7 7-3-3z"/>
                       <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
@@ -74,13 +64,12 @@
               </div>
             </div>
 
-            <!-- FILE UPLOAD — drag, drop, or click -->
+            <!-- FILE UPLOAD — multiple photos supported -->
             <div class="form-group">
-              <label class="form-label">Upload Your Work</label>
+              <label class="form-label">Upload Your Work <span style="font-family:var(--ff-mono);font-size:0.65rem;color:var(--muted);">(select multiple)</span></label>
               <div class="file-upload-area" @click="triggerFileInput" @dragover.prevent @drop.prevent="handleDrop">
-                <input type="file" ref="fileInput" accept="image/*" style="display:none" @change="handleFileChange" />
+                <input type="file" ref="fileInput" accept="image/*" multiple style="display:none" @change="handleFileChange" />
 
-                <!-- Empty state -->
                 <div v-if="!uploadPreview && !uploading">
                   <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 12px;display:block;color:var(--muted)">
                     <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
@@ -88,21 +77,20 @@
                     <line x1="12" y1="3" x2="12" y2="15"/>
                   </svg>
                   <div style="font-family:var(--ff-mono);font-size:0.78rem;color:var(--muted);text-align:center;">Click to upload or drag and drop</div>
-                  <div style="font-family:var(--ff-mono);font-size:0.68rem;color:var(--muted);text-align:center;margin-top:4px;">PNG, JPG, WEBP — max 5MB</div>
+                  <div style="font-family:var(--ff-mono);font-size:0.68rem;color:var(--muted);text-align:center;margin-top:4px;">PNG, JPG, WEBP — up to 20MB each — multiple allowed</div>
                 </div>
 
-                <!-- Preview after selecting -->
-                <div v-if="uploadPreview" style="text-align:center;">
+                <div v-if="uploadPreview && !uploading" style="text-align:center;">
                   <img :src="uploadPreview" style="max-height:200px;max-width:100%;border-radius:4px;margin-bottom:8px;" />
-                  <div style="font-family:var(--ff-mono);font-size:0.72rem;color:var(--muted);">{{ uploadedFile?.name }}</div>
-                  <button @click.stop="clearUpload" style="font-family:var(--ff-mono);font-size:0.68rem;color:var(--red);background:none;border:none;cursor:pointer;margin-top:6px;">Remove image</button>
+                  <div style="font-family:var(--ff-mono);font-size:0.72rem;color:var(--muted);">
+                    {{ uploadPreviewCount > 1 ? `${uploadPreviewCount} photos selected` : uploadedFiles[0]?.name }}
+                  </div>
+                  <button @click.stop="clearUpload" style="font-family:var(--ff-mono);font-size:0.68rem;color:var(--red);background:none;border:none;cursor:pointer;margin-top:6px;">Remove</button>
                 </div>
 
-                <!-- Upload in progress -->
-                <div v-if="uploading" style="text-align:center;font-family:var(--ff-mono);font-size:0.78rem;color:var(--muted);">Uploading your image...</div>
+                <div v-if="uploading" style="text-align:center;font-family:var(--ff-mono);font-size:0.78rem;color:var(--muted);">Uploading your images...</div>
               </div>
 
-              <!-- Optional link fallback -->
               <div style="margin-top:10px;">
                 <input class="form-input" v-model="submitForm.link" type="url" placeholder="Or paste a link instead (VSCO, 500px, Instagram...)" />
               </div>
@@ -117,6 +105,26 @@
             <div class="form-group">
               <label class="form-label">Brief Description</label>
               <textarea class="form-textarea" v-model="submitForm.description" placeholder="Give reviewers context — what is this, what stage is it at?" style="min-height: 90px;"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Your Name (optional)</label>
+              <input class="form-input" v-model="submitForm.submitterName" type="text" placeholder="e.g. Oluwafemi Kodaolu — leave blank to stay anonymous" />
+              <div style="font-family:var(--ff-mono);font-size:0.68rem;color:var(--muted);margin-top:6px;">Shows on your work only if you make it public.</div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Visibility</label>
+              <div style="display:flex;gap:10px;">
+                <div :class="['type-btn', submitForm.isPublic ? 'active' : '']" @click="submitForm.isPublic = true" style="flex:1;padding:14px;text-align:left;">
+                  <div style="font-size:0.85rem;font-weight:600;margin-bottom:4px;">Public</div>
+                  <div style="font-family:var(--ff-mono);font-size:0.65rem;color:var(--muted);">Anyone can see and review your work</div>
+                </div>
+                <div :class="['type-btn', !submitForm.isPublic ? 'active' : '']" @click="submitForm.isPublic = false" style="flex:1;padding:14px;text-align:left;">
+                  <div style="font-size:0.85rem;font-weight:600;margin-bottom:4px;">Private</div>
+                  <div style="font-family:var(--ff-mono);font-size:0.65rem;color:var(--muted);">Only you can see it — share the link directly</div>
+                </div>
+              </div>
             </div>
 
             <button class="btn-main" style="width: 100%;" @click="handleSubmitWork" :disabled="submitting">
@@ -138,27 +146,40 @@
             <div class="review-card-header">
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
                 <span class="card-type" :style="{ background: typeColors[work.type] }">{{ typeLabels[work.type] }}</span>
-                <span class="review-card-meta">{{ work.reviews?.length || 0 }} reviews</span>
+                <div style="display:flex;gap:6px;align-items:center;">
+                  <span style="font-family:var(--ff-mono);font-size:0.62rem;padding:2px 7px;border-radius:2px;" :style="{ background: work.is_public ? 'rgba(46,107,79,0.1)' : 'rgba(138,128,112,0.1)', color: work.is_public ? '#2e6b4f' : 'var(--muted)' }">
+                    {{ work.is_public ? 'Public' : 'Private' }}
+                  </span>
+                  <span class="review-card-meta">{{ work.reviews?.length || 0 }} reviews</span>
+                </div>
               </div>
               <div class="review-card-title">{{ work.title }}</div>
-              <div class="review-card-meta">{{ timeAgo(work.created_at) }}</div>
+              <div style="display:flex;gap:8px;align-items:center;margin-top:2px;">
+                <div class="review-card-meta">{{ timeAgo(work.created_at) }}</div>
+                <div v-if="work.submitter_name" style="font-family:var(--ff-mono);font-size:0.65rem;color:var(--muted);">· by {{ work.submitter_name }}</div>
+              </div>
             </div>
             <div class="review-card-body">
-              <!-- Show image thumbnail if it was uploaded directly -->
-              <div v-if="work.link && isImageUrl(work.link)" style="margin-bottom:12px;">
-                <img :src="work.link" style="width:100%;border-radius:4px;max-height:180px;object-fit:cover;" />
+              <!-- Show images — supports multiple comma-separated URLs -->
+              <div v-if="work.link" style="margin-bottom:12px;">
+                <div v-if="getImageUrls(work.link).length" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px;">
+                  <div v-for="(url, i) in getImageUrls(work.link)" :key="i" style="position:relative;">
+                    <img :src="url" style="width:100%;height:100px;object-fit:cover;border-radius:4px;" />
+                    <div v-if="work.submitter_name && i === 0" style="position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,0.55);color:white;font-family:var(--ff-mono);font-size:0.6rem;padding:2px 6px;border-radius:2px;">
+                      {{ work.submitter_name }}
+                    </div>
+                  </div>
+                </div>
+                <a v-else :href="work.link" target="_blank" style="font-family:var(--ff-mono);font-size:0.7rem;color:var(--red);">View Work ↗</a>
               </div>
               <div class="review-snippet">{{ work.description || 'No description.' }}</div>
               <div v-if="work.context" style="font-family:var(--ff-mono);font-size:0.7rem;color:var(--red);margin-bottom:8px;">❓ {{ work.context }}</div>
-              <a v-if="work.link && !isImageUrl(work.link)" :href="work.link" target="_blank" style="font-family:var(--ff-mono);font-size:0.7rem;color:var(--red);">View Work ↗</a>
-              <!-- Copy shareable link -->
               <div style="margin-top:10px;">
                 <button @click="copyWorkLink(work.id)" style="font-family:var(--ff-mono);font-size:0.68rem;color:var(--muted);background:none;border:1px solid var(--border);border-radius:2px;padding:4px 10px;cursor:pointer;transition:all 0.2s;">
                   {{ copiedId === work.id ? '✓ Link Copied!' : 'Copy Share Link' }}
                 </button>
               </div>
             </div>
-            <!-- Reviews received -->
             <div v-if="work.reviews?.length > 0" style="padding: 12px 20px; border-top: 1px solid var(--border);">
               <div style="font-family:var(--ff-mono);font-size:0.68rem;color:var(--muted);margin-bottom:10px;">REVIEWS RECEIVED</div>
               <div v-for="(review, i) in work.reviews" :key="i" style="padding: 10px; background: var(--cream); border-radius: 4px; margin-bottom: 8px;">
@@ -197,11 +218,7 @@
                 <div v-for="criterion in currentCriteria" :key="criterion" style="text-align:center;flex:1;min-width:80px;">
                   <div style="font-family:var(--ff-mono);font-size:0.65rem;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">{{ criterion }}</div>
                   <div style="display:flex;gap:2px;justify-content:center;flex-wrap:wrap;">
-                    <span
-                      v-for="n in 10" :key="n"
-                      :style="{ color: reviewForm.scores[criterion] >= n ? 'var(--gold)' : 'var(--border)', cursor: 'pointer', fontSize: '1rem' }"
-                      @click="reviewForm.scores[criterion] = n"
-                    >★</span>
+                    <span v-for="n in 10" :key="n" :style="{ color: reviewForm.scores[criterion] >= n ? 'var(--gold)' : 'var(--border)', cursor: 'pointer', fontSize: '1rem' }" @click="reviewForm.scores[criterion] = n">★</span>
                   </div>
                   <div style="font-family:var(--ff-mono);font-size:0.65rem;color:var(--muted);margin-top:3px;">{{ reviewForm.scores[criterion] || '—' }}/10</div>
                 </div>
@@ -258,10 +275,11 @@ const copiedId = ref(null)
 // File upload state
 const fileInput = ref(null)
 const uploadedFile = ref(null)
+const uploadedFiles = ref([])
 const uploadPreview = ref(null)
+const uploadPreviewCount = ref(0)
 const uploading = ref(false)
 
-// Only 3 categories now
 const types = [
   { value: 'film', label: 'Photography' },
   { value: 'art', label: 'Art' },
@@ -277,7 +295,13 @@ const criteria = {
   design: ['Concept', 'Execution', 'Originality', 'Clarity']
 }
 
-const submitForm = ref({ title: '', type: 'film', link: '', context: '', description: '', isPublic: true, submitterName: '' })
+const submitForm = ref({
+  title: '', type: 'film', link: '', context: '',
+  description: '', isPublic: true, submitterName: ''
+})
+const submitErrors = ref({ title: '', link: '' })
+const reviewForm = ref({ workId: '', text: '', strength: '', weakness: '', scores: {} })
+const currentCriteria = ref([])
 
 function updateCriteria() {
   const work = allWorks.value.find(w => w.id === reviewForm.value.workId)
@@ -288,43 +312,46 @@ function updateCriteria() {
   }
 }
 
-// File upload functions
 function triggerFileInput() { fileInput.value?.click() }
 
 function handleFileChange(e) {
-  const file = e.target.files[0]
-  if (file) processFile(file)
+  const files = Array.from(e.target.files)
+  if (files.length) processFiles(files)
 }
 
 function handleDrop(e) {
-  const file = e.dataTransfer.files[0]
-  if (file) processFile(file)
+  const files = Array.from(e.dataTransfer.files)
+  if (files.length) processFiles(files)
 }
 
-function processFile(file) {
-  if (file.size > 5 * 1024 * 1024) {
-    alert('That image is too large. Keep it under 5MB please.')
-    return
-  }
-  uploadedFile.value = file
-  // Show a preview before uploading
+function processFiles(files) {
+  const validFiles = files.filter(f => {
+    if (f.size > 20 * 1024 * 1024) {
+      alert(`${f.name} is too large — keep each file under 20MB.`)
+      return false
+    }
+    return true
+  })
+  if (!validFiles.length) return
+  uploadedFiles.value = validFiles
+  uploadPreviewCount.value = validFiles.length
   const reader = new FileReader()
   reader.onload = (e) => { uploadPreview.value = e.target.result }
-  reader.readAsDataURL(file)
+  reader.readAsDataURL(validFiles[0])
 }
 
 function clearUpload() {
   uploadedFile.value = null
+  uploadedFiles.value = []
   uploadPreview.value = null
+  uploadPreviewCount.value = 0
   if (fileInput.value) fileInput.value.value = ''
 }
 
 async function uploadToSupabase(file) {
   const ext = file.name.split('.').pop()
   const filename = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}.${ext}`
-  const { error } = await supabase.storage
-    .from('works')
-    .upload(filename, file, { contentType: file.type })
+  const { error } = await supabase.storage.from('works').upload(filename, file, { contentType: file.type })
   if (error) throw error
   const { data: urlData } = supabase.storage.from('works').getPublicUrl(filename)
   return urlData.publicUrl
@@ -334,9 +361,13 @@ function isImageUrl(url) {
   return url && (url.includes('supabase') || /\.(jpg|jpeg|png|webp|gif)$/i.test(url))
 }
 
+function getImageUrls(link) {
+  if (!link) return []
+  return link.split(',').filter(u => isImageUrl(u.trim())).map(u => u.trim())
+}
+
 function copyWorkLink(workId) {
-  const url = `${window.location.origin}/work/${workId}`
-  navigator.clipboard.writeText(url)
+  navigator.clipboard.writeText(`${window.location.origin}/work/${workId}`)
   copiedId.value = workId
   setTimeout(() => { copiedId.value = null }, 2500)
 }
@@ -347,16 +378,14 @@ onMounted(async () => {
   userName.value = session.user.user_metadata?.full_name || ''
 
   const { data: works } = await supabase
-    .from('works')
-    .select('*, reviews(*)')
+    .from('works').select('*, reviews(*)')
     .eq('user_id', session.user.id)
     .order('created_at', { ascending: false })
   myWorks.value = works || []
   loadingWorks.value = false
 
   const { data: all } = await supabase
-    .from('works')
-    .select('id, title, type')
+    .from('works').select('id, title, type')
     .neq('user_id', session.user.id)
     .order('created_at', { ascending: false })
   allWorks.value = all || []
@@ -377,14 +406,13 @@ async function handleSubmitWork() {
 
   submitting.value = true
   const { data: { session } } = await supabase.auth.getSession()
-
   let imageUrl = submitForm.value.link
 
-  // If they uploaded a file, send it to Supabase Storage first
-  if (uploadedFile.value) {
+  if (uploadedFiles.value.length) {
     try {
       uploading.value = true
-      imageUrl = await uploadToSupabase(uploadedFile.value)
+      const urls = await Promise.all(uploadedFiles.value.map(f => uploadToSupabase(f)))
+      imageUrl = urls.join(',')
       uploading.value = false
     } catch (err) {
       alert('Upload failed: ' + err.message)
@@ -400,7 +428,9 @@ async function handleSubmitWork() {
     link: imageUrl,
     context: submitForm.value.context,
     description: submitForm.value.description,
-    user_id: session.user.id
+    user_id: session.user.id,
+    is_public: submitForm.value.isPublic,
+    submitter_name: submitForm.value.submitterName || null
   })
 
   submitting.value = false
@@ -409,15 +439,14 @@ async function handleSubmitWork() {
   clearUpload()
 
   const { data: works } = await supabase
-    .from('works')
-    .select('*, reviews(*)')
+    .from('works').select('*, reviews(*)')
     .eq('user_id', session.user.id)
     .order('created_at', { ascending: false })
   myWorks.value = works || []
 }
 
 function resetSubmit() {
-  submitForm.value = { title: '', type: 'film', link: '', context: '', description: '' }
+  submitForm.value = { title: '', type: 'film', link: '', context: '', description: '', isPublic: true, submitterName: '' }
   submitSuccess.value = false
   clearUpload()
 }
